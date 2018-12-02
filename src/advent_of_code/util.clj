@@ -10,3 +10,6 @@
 (defn get-input [year day]
   (->> (client/get (str "https://adventofcode.com/" year "/day/" day "/input") {:cookies [session-cookie]})
        (:body)))
+
+(defn zip [lists]
+  (apply map vector lists))
