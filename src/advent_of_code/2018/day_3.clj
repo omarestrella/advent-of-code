@@ -21,17 +21,29 @@
     (->> (process-input input)
          (map #(get-coords (:pos %1) (:size %1)))
          (mapcat identity)
-         (reduce (fn [results [x y]]
-                   (let [value (aget grid x y)
-                         new-value (aset-int grid x y (inc value))]
-                     (if (> new-value 1)
-                       (conj results [x y])
-                       results)))
-                 #{})
+         (reduce (fn [seen coord]
+                   (if (nil? (get seen coord))
+                     (assoc seen coord 1)
+                     (update-in seen [coord] inc)))
+                 {})
+         (filter #(> (second %1) 1))
+         (vals)
          (count))))
 
 (defn part-2 [input]
-  (let [input] (process-input "#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2"))
+  (let [grid (make-array Integer/TYPE 10 10)
+        input "#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2"])
+    ;(->> (process-input input)
+    ;     (map #(get-coords (:pos %1) (:size %1)))
+    ;     (mapcat identity)
+    ;     (reduce (fn [results [x y]]
+    ;               (let [value (aget grid x y)
+    ;                     new-value (aset-int grid x y (inc value))]
+    ;                 (if (> new-value 1)
+    ;                   (conj results [x y])
+    ;                   results)))
+    ;             #{}))
+    ;(clojure.pprint/pprint grid))
   0)
 
 (defn run [input]
