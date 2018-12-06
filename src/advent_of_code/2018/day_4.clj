@@ -35,14 +35,14 @@
 (defn parse-entry [entry]
   (let [[time guard] (entry-information entry)]
     (cond
-      (is-guard-entry entry) {:type  :shift-start
-                              :guard guard
-                              :time time
-                              :minutes  (get-minutes time)}
-      (is-sleep-entry entry) {:type  (if (is-awake entry) :awake :asleep)
-                              :guard guard
-                              :time time
-                              :minutes  (get-minutes time)})))
+      (is-guard-entry entry) {:type    :shift-start
+                              :guard   guard
+                              :time    time
+                              :minutes (get-minutes time)}
+      (is-sleep-entry entry) {:type    (if (is-awake entry) :awake :asleep)
+                              :guard   guard
+                              :time    time
+                              :minutes (get-minutes time)})))
 
 (defn nearest-guard [entries]
   (->> (reverse entries)
@@ -57,12 +57,12 @@
                                           (= (:type %) :asleep)))
                              (map :minutes)
                              (partition 2))]
-    {:id id
+    {:id      id
      :minutes grouped-minutes
-     :total (->> grouped-minutes
-                 (reduce (fn [sum [end start]]
-                           (+ sum (- end start)))
-                         0))}))
+     :total   (->> grouped-minutes
+                   (reduce (fn [sum [end start]]
+                             (+ sum (- end start)))
+                           0))}))
 
 (defn guard-data [input]
   (let [entries (->> input
@@ -84,15 +84,25 @@
   (let [guard (->> (guard-data input)
                    (map extract-times)
                    (apply max-key :total))]
-    (->> guard
-         (:minutes)
-         (minute-counts)
-         (last)
-         (first)
-         (* (util/parse-int (:id guard))))))
+    (-> guard
+        (:minutes)
+        (minute-counts)
+        (last)
+        (first)
+        (* (util/parse-int (:id guard))))))
 
 (defn part-2 [input]
-  0)
+  (let [guards (->> (guard-data input)
+                    (map extract-times))
+        guard (->> guards
+                   (map (fn [{id :id minutes :minutes}]
+                          {:id          id
+                           :final-count (last (minute-counts minutes))}))
+                   (sort-by #(get-in % [:final-count 1]))
+                   (last))]
+    (-> guard
+        (get-in [:final-count 0])
+        (* (util/parse-int (:id guard))))))
 
 (defn run [input]
   [(part-1 input) (part-2 input)])
