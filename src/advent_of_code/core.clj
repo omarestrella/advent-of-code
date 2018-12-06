@@ -4,7 +4,8 @@
             [advent-of-code.util :as util]
             [advent-of-code.2018.day-1 :as day-1]
             [advent-of-code.2018.day-2 :as day-2]
-            [advent-of-code.2018.day-3 :as day-3]))
+            [advent-of-code.2018.day-3 :as day-3]
+            [advent-of-code.2018.day-4 :as day-4]))
 
 (defn run-day-1 []
   (let [input (->> (util/get-input 2018 1)
@@ -26,7 +27,13 @@
     (println "Part 1:" part-1)
     (println "Part 2:" part-2)))
 
+(defn run-day-4 []
+  (let [input (->> (util/get-input 2018 4))
+        [part-1 part-2] (day-4/run input)]
+    (println "Part 1:" part-1)
+    (println "Part 2:" part-2)))
+
 (defn -main [& args]
-  (run-day-3))
+  (run-day-4))
 
 
